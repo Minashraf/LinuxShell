@@ -1,0 +1,3 @@
+/home/mina/CLionProjects/shell/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/mina/CLionProjects/shell/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/mina/CLionProjects/shell/cmake-build-debug/CMakeFiles/shell.dir
