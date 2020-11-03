@@ -7,7 +7,7 @@
 #define MAX 1000
 
 FILE *fptr;
-char *process;
+char *parsed[MAX];
 
 void removeLeadingSpaces(char *str)
 {
@@ -50,13 +50,20 @@ void ChangeDirectory(char *path)
 
 void logfile()
 {
-    fprintf(fptr,"Child process (%s) was terminated\n",process);
+    char command[MAX]="\"";
+    int i=0;
+    while (parsed[i]!=NULL)
+    {
+        strcat(command,parsed[i]);
+        ++i;
+        if(parsed[i]!=NULL)
+            strcat(command," ");
+    }
+    fprintf(fptr,"Child process %s\" was terminated\n",command);
 }
-
-void execute(char *command)
+int ParseCommand(char *command)
 {
     char *argument = strtok(command, " ");
-    char *parsed[MAX];
     int index=0;
     while(argument!=NULL)
     {
@@ -71,7 +78,12 @@ void execute(char *command)
         parsed[i]=NULL;
         ++i;
     }
-    process=*parsed;
+    return index;
+}
+
+void execute(char *command)
+{
+    int index=ParseCommand(command);
     if(strcmp("cd",parsed[0])!=0)
     {
         signal(SIGCHLD,logfile);
