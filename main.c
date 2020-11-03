@@ -3,18 +3,18 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
-
+#include <time.h>
 #define MAX 1000
 
 FILE *fptr;
 char *parsed[MAX];
 
-void removeLeadingSpaces(char *str)
+void RemoveLeadingSpaces(char *str)
 {
     char str1[MAX];
     int count = 0,k,j;
 
-    while (str[count] == ' ')
+    while (str[count] == ' ' || str[count] == '\t')
         ++count;
 
     for (j = count, k = 0;str[j] != '\0'; j++, k++)
@@ -24,7 +24,7 @@ void removeLeadingSpaces(char *str)
     strcpy(str, str1);
 }
 
-void trimTrailing(char *str)
+void TrimTrailing(char *str)
 {
     int index=-1,i=0;
     while(str[i] != '\0')
@@ -37,18 +37,7 @@ void trimTrailing(char *str)
     str[index+1]='\0';
 }
 
-void ChangeDirectory(char *path)
-{
-    int fail;
-    if(!strcmp(path,"~"))
-        fail=chdir(getenv("HOME"));
-    else
-        fail=chdir(path);
-    if (fail)
-        printf("Failed to go to %s",path);
-}
-
-void logfile()
+void logfile(int ErrorType)
 {
     char command[MAX]="\"";
     int i=0;
@@ -59,8 +48,39 @@ void logfile()
         if(parsed[i]!=NULL)
             strcat(command," ");
     }
-    fprintf(fptr,"Child process %s\" was terminated\n",command);
+    time_t t;
+    time(&t);
+    fprintf(fptr,"%s ",strtok(ctime(&t), "\n"));
+    if(ErrorType == 1)
+        fprintf(fptr,"SUCCESS: Background process %s\"\n",command);
+    else if(ErrorType == 2)
+        fprintf(fptr,"INFO: Changing to directory %s\"\n",command);
+    else if(ErrorType == 3)
+        fprintf(fptr,"ERROR: command %s\" couldn't be executed\n",command);
+    else if(ErrorType == 4)
+        fprintf(fptr,"ERROR: Failed to reach directory %s\"\n",command);
+    else if(ErrorType == 5)
+        fprintf(fptr,"SUCCESS: reached directory %s\"\n",command);
+    else
+        fprintf(fptr,"INFO: Child process %s\" was terminated\n",command);
 }
+
+void ChangeDirectory(char *path)
+{
+    int fail;
+    if(!strcmp(path,"~"))
+        fail=chdir(getenv("HOME"));
+    else
+        fail=chdir(path);
+    if (fail)
+    {
+        printf("Failed to go to %s",path);
+        logfile(4);
+    }
+    else
+        logfile(5);
+}
+
 int ParseCommand(char *command)
 {
     char *argument = strtok(command, " ");
@@ -90,28 +110,36 @@ void execute(char *command)
         pid_t pid = fork();
         if (!pid) {
             if (execvp(parsed[0], parsed) < 0)
+            {
                 printf("Could not execute command %s\n", *parsed);
+                logfile(3);
+            }
             exit(0);
         } else {
+            sleep((unsigned int) 0.5);
             if (strcmp(parsed[index - 1], "&")!=0)
                 wait(NULL);
-            sleep(1);
+            else
+                logfile(1);
         }
     }
     else
+    {
+        logfile(2);
         ChangeDirectory(parsed[1]);
+    }
 }
 
 int main() {
-    fptr=fopen("Children.log","w");
+    fptr=fopen("Process.log","w");
     while(1)
     {
         fflush(stdin);
         printf("\n%s's Shell >>> ",getenv("USER"));
         char command[MAX];
         fgets(command, MAX, stdin);
-        removeLeadingSpaces(command);
-        trimTrailing(command);
+        RemoveLeadingSpaces(command);
+        TrimTrailing(command);
         if(!strcmp("exit",command))
         {   printf("Goodbye!");
             fclose(fptr);
