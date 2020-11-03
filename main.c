@@ -72,7 +72,7 @@ void execute(char *command)
         ++i;
     }
     process=*parsed;
-    if(strcmp("cd",parsed[0]))
+    if(strcmp("cd",parsed[0])!=0)
     {
         signal(SIGCHLD,logfile);
         pid_t pid = fork();
@@ -81,7 +81,7 @@ void execute(char *command)
                 printf("Could not execute command %s\n", *parsed);
             exit(0);
         } else {
-            if (strcmp(parsed[index - 1], "&"))
+            if (strcmp(parsed[index - 1], "&")!=0)
                 wait(NULL);
             sleep(1);
         }
