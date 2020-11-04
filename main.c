@@ -76,23 +76,25 @@ int ParseCommand(char *command)
     return index;
 }
 
-void execute(char *command)
+void execute(int last)
 {
-    int index=ParseCommand(command);
     if(strcmp("cd",parsed[0])!=0)
     {
         signal(SIGCHLD,logfile);
         pid_t pid = fork();
-        if (!pid) {
-            if (execvp(parsed[0], parsed) < 0)
+        if (!pid)
+        {
+            if (execvp(parsed[0],parsed)<0)
             {
                 printf("Could not execute command %s\n", *parsed);
                 logfile(3);
             }
             exit(0);
-        } else {
+        }
+        else
+        {
             sleep(1);
-            if (strcmp(parsed[index - 1], "&")!=0)
+            if (strcmp(parsed[last-1],"&")!=0)
                 wait(NULL);
             else
                 logfile(1);
@@ -105,22 +107,25 @@ void execute(char *command)
     }
 }
 
-int main() {
+int main()
+{
     fptr=fopen("Process.log","w");
+    char *LineStart=strcat(getenv("USER"),"'s Shell >>> ");
     while(1)
     {
         fflush(stdin);
-        printf("\n%s",getenv("USER"));
         char command[MAX];
-        char *buf = readline("'s Shell >>> ");
-        if (strlen(buf) != 0) {
+        char *buf = readline(LineStart);
+        if (strlen(buf)!=0)
+        {
             add_history(buf);
             strcpy(command, buf);
-            if(!strcmp("exit",command))
+            int index=ParseCommand(command);
+            if(!strcmp("exit",parsed[0]))
             {   fclose(fptr);
                 exit(0);
             }
-            execute(command);
+            execute(index);
         }
     }
 }

@@ -19,4 +19,8 @@ sys/wait.h
 -
 time.h
 -
+readline/readline.h
+-
+readline/history.h
+-
 
