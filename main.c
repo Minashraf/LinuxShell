@@ -11,9 +11,12 @@
 
 FILE *fptr;
 char *parsed[MAX];
+int Background[MAX];
+int BackGroundIndex=0;
 
 void logfile(int ErrorType)
 {
+    fptr=fopen("Process.log","a");
     char command[MAX]="\"";
     int i=0;
     while (parsed[i]!=NULL)
@@ -38,6 +41,7 @@ void logfile(int ErrorType)
         fprintf(fptr,"SUCCESS: reached directory %s\"\n",command);
     else
         fprintf(fptr,"INFO: Child process %s\" was terminated\n",command);
+    fclose(fptr);
 }
 
 void ChangeDirectory(char *path)
@@ -82,6 +86,8 @@ void execute(int last)
     {
         signal(SIGCHLD,logfile);
         pid_t pid = fork();
+        if (strcmp(parsed[last-1],"&")==0)
+            Background[BackGroundIndex++]=pid;
         if (!pid)
         {
             if (execvp(parsed[0],parsed)<0)
@@ -110,19 +116,20 @@ void execute(int last)
 int main()
 {
     fptr=fopen("Process.log","w");
+    fclose(fptr);
     char *LineStart=strcat(getenv("USER"),"'s Shell >>> ");
     while(1)
     {
         fflush(stdin);
-        char command[MAX];
-        char *buf = readline(LineStart);
-        if (strlen(buf)!=0)
+        char *command = readline(LineStart);
+        if (strlen(command)!=0)
         {
-            add_history(buf);
-            strcpy(command, buf);
+            add_history(command);
             int index=ParseCommand(command);
             if(!strcmp("exit",parsed[0]))
-            {   fclose(fptr);
+            {
+                for(int i=0;i<BackGroundIndex;++i)
+                    kill(Background[i],SIGTERM);
                 exit(0);
             }
             execute(index);
