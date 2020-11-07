@@ -130,7 +130,7 @@ int main()
         {
             add_history(command);
             int index=ParseCommand(command);
-            if(!strcmp("exit",parsed[0]))
+            if(!strcmp("exit",parsed[0])&&parsed[1]==NULL)
             {
                 for(int i=0;i<BackGroundIndex;++i)
                     kill(Background[i],SIGTERM);
