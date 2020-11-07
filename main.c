@@ -96,7 +96,16 @@ void execute(int last)
                 parsed[last-1]=NULL;
             if (execvp(parsed[0],parsed)<0)
             {
-                printf("Could not execute command %s\n", *parsed);
+                char command[MAX]="";
+                int i=0;
+                while (parsed[i]!=NULL)
+                {
+                    strcat(command,parsed[i]);
+                    ++i;
+                    if(parsed[i]!=NULL)
+                        strcat(command," ");
+                }
+                printf("Could not execute command %s\n", command);
                 logfile(3);
             }
             exit(0);
@@ -134,7 +143,8 @@ int main()
             {
                 for(int i=0;i<BackGroundIndex;++i)
                     kill(Background[i],SIGTERM);
-                logfile(6);
+                if(BackGroundIndex)
+                    logfile(6);
                 exit(0);
             }
             execute(index);
