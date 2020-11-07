@@ -39,6 +39,8 @@ void logfile(int ErrorType)
         fprintf(fptr,"ERROR: Failed to reach directory %s\"\n",command);
     else if(ErrorType == 5)
         fprintf(fptr,"SUCCESS: reached directory %s\"\n",command);
+    else if(ErrorType==6)
+        fprintf(fptr,"INFO: Background programs terminated\"\n");
     else
         fprintf(fptr,"INFO: Child process %s\" was terminated\n",command);
     fclose(fptr);
@@ -90,6 +92,8 @@ void execute(int last)
             Background[BackGroundIndex++]=pid;
         if (!pid)
         {
+            if (strcmp(parsed[last-1],"&")==0)
+                parsed[last-1]=NULL;
             if (execvp(parsed[0],parsed)<0)
             {
                 printf("Could not execute command %s\n", *parsed);
@@ -130,6 +134,7 @@ int main()
             {
                 for(int i=0;i<BackGroundIndex;++i)
                     kill(Background[i],SIGTERM);
+                logfile(6);
                 exit(0);
             }
             execute(index);
