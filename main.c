@@ -16,7 +16,7 @@ int BackGroundIndex=0;
 
 void logfile(int ErrorType)
 {
-    fptr=fopen("Process.log","a+");
+    fptr=fopen("/tmp/Process.log","a+");
     char command[MAX]="\"";
     int i=0;
     while (parsed[i]!=NULL)
@@ -125,9 +125,19 @@ void execute(int last)
     }
     else
     {
+
         logfile(2);
         ChangeDirectory(parsed[1]);
     }
+}
+
+void BeforeExit()
+{
+    if(BackGroundIndex)
+        logfile(6);
+    logfile(7);
+    for(int i=0;i<BackGroundIndex;++i)
+        kill(Background[i],SIGTERM);
 }
 
 int main()
@@ -136,6 +146,7 @@ int main()
     char *LineStart=strcat(getenv("USER"),"'s Shell >>> ");
     while(1)
     {
+        signal(SIGHUP,BeforeExit);
         fflush(stdin);
         char *command = readline(LineStart);
         if (strlen(command)!=0)
@@ -144,11 +155,7 @@ int main()
             int index=ParseCommand(command);
             if(!strcmp("exit",parsed[0])&&parsed[1]==NULL)
             {
-                for(int i=0;i<BackGroundIndex;++i)
-                    kill(Background[i],SIGTERM);
-                if(BackGroundIndex)
-                    logfile(6);
-                logfile(7);
+                BeforeExit();
                 exit(0);
             }
             execute(index);
