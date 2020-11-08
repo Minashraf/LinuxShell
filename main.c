@@ -43,6 +43,8 @@ void logfile(int ErrorType)
         fprintf(fptr,"INFO: Background programs terminated\n");
     else if(ErrorType==7)
         fprintf(fptr,"INFO: Shell terminated\n");
+    else if(ErrorType==8)
+        fprintf(fptr,"INFO: Shell initiated\n");
     else
         fprintf(fptr,"INFO: Child process %s\" was terminated\n",command);
     fclose(fptr);
@@ -130,6 +132,7 @@ void execute(int last)
 
 int main()
 {
+    logfile(8);
     char *LineStart=strcat(getenv("USER"),"'s Shell >>> ");
     while(1)
     {
