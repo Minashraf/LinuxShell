@@ -16,7 +16,7 @@ int BackGroundIndex=0;
 
 void logfile(int ErrorType)
 {
-    fptr=fopen("Process.log","a");
+    fptr=fopen("Process.log","a+");
     char command[MAX]="\"";
     int i=0;
     while (parsed[i]!=NULL)
@@ -40,7 +40,9 @@ void logfile(int ErrorType)
     else if(ErrorType == 5)
         fprintf(fptr,"SUCCESS: reached directory %s\"\n",command);
     else if(ErrorType==6)
-        fprintf(fptr,"INFO: Background programs terminated\"\n");
+        fprintf(fptr,"INFO: Background programs terminated\n");
+    else if(ErrorType==7)
+        fprintf(fptr,"INFO: Shell terminated\n");
     else
         fprintf(fptr,"INFO: Child process %s\" was terminated\n",command);
     fclose(fptr);
@@ -128,8 +130,6 @@ void execute(int last)
 
 int main()
 {
-    fptr=fopen("Process.log","w");
-    fclose(fptr);
     char *LineStart=strcat(getenv("USER"),"'s Shell >>> ");
     while(1)
     {
@@ -145,6 +145,7 @@ int main()
                     kill(Background[i],SIGTERM);
                 if(BackGroundIndex)
                     logfile(6);
+                logfile(7);
                 exit(0);
             }
             execute(index);
