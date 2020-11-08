@@ -133,11 +133,11 @@ void execute(int last)
 
 void BeforeExit()
 {
+    for(int i=0;i<BackGroundIndex;++i)
+        kill(Background[i],SIGTERM);
     if(BackGroundIndex)
         logfile(6);
     logfile(7);
-    for(int i=0;i<BackGroundIndex;++i)
-        kill(Background[i],SIGTERM);
 }
 
 int main()
