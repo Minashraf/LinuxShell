@@ -13,8 +13,8 @@ gcc main.c -lreadline
 ./a.out
 ```
 ## Screenshots
-![Screenshot_1](Screenshot_1.png?raw=true)
-Background Processes:
-![Screenshot_2](Screenshot_2.png?raw=true)
-Log File in /tmp:
-![Screenshot_3](Screenshot_3.png?raw=true)
+![Screenshot_1](Screenshot_1.png?raw=true)<br /> 
+Background Processes:<br /> 
+![Screenshot_2](Screenshot_2.png?raw=true)<br /> 
+Log File in /tmp:<br /> 
+![Screenshot_3](Screenshot_3.png?raw=true)<br /> 
