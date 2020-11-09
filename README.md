@@ -7,7 +7,7 @@ An interactive linux shell that supports the following:
 * A log file is generate in /tmp directory
 
 ## How to run
-Make sure the terminal working directory is the same as the project one
+Make sure the terminal working directory is the same as the project one <br /> 
 Enter these commands in the Linux terminal
 ```shell
 gcc main.c -lreadline
