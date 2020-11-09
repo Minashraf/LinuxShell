@@ -3,6 +3,7 @@ An interactive linux shell that supports the following:
 * History
 * Autocomplete
 * Background Process
+* Kill all background process when exiting whether by writing exit or clicking *X*
 * Writes the username in each command
 * A log file is generated in /tmp directory
 
