@@ -8,6 +8,7 @@ An interactive linux shell that supports the following:
 
 ## How to run
 Make sure the terminal working directory is the same as the project one
+Enter these commands in the Linux terminal
 ```shell
 gcc main.c -lreadline
 ./a.out
