@@ -4,7 +4,7 @@ An interactive linux shell that supports the following:
 * Autocomplete
 * Background Process
 * Writes the username in each command
-* A log file is generate in /tmp directory
+* A log file is generated in /tmp directory
 
 ## How to run
 Make sure the terminal working directory is the same as the project one <br /> 
